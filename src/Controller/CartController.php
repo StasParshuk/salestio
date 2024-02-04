@@ -13,9 +13,9 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 class CartController extends AbstractController
 {
     #[Route('/calculate', name: 'app_cart_calculate',methods: "POST")]
-    public function calculate(    #[MapRequestPayload] CartCalculateItemDto $calculateItemDto,CartCalculationService $calculationService): Response
+    public function calculate(#[MapRequestPayload] CartCalculateItemDto $calculateItemDto,CartCalculationService $calculationService): Response
     {
-        $calculationService->calculate();
+        $calculationService->calculate($calculateItemDto);
         return $this->render('test/index.html.twig', [
             'controller_name' => 'TestController',
         ]);

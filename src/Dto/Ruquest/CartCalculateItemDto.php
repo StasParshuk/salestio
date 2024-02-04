@@ -16,4 +16,14 @@ class CartCalculateItemDto
         public readonly string $checkoutCurrency,
     ) {
     }
+
+    public function getCheckoutCurrency(): string
+    {
+        return $this->checkoutCurrency;
+    }
+
+    public function getItems(): array
+    {
+        return $this->items;
+    }
 }
