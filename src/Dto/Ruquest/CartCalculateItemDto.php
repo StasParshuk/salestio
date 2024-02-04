@@ -12,7 +12,7 @@ class CartCalculateItemDto
         #[CustomAssert\CartItem]
         public readonly array $items,
 
-        #[Assert\Choice(['USD', 'EUR'])]
+        #[Assert\Choice(['USD'],message: "в бесплатной версии ток usd можно отправить")]
         public readonly string $checkoutCurrency,
     ) {
     }

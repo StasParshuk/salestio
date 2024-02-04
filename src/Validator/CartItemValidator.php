@@ -39,11 +39,12 @@ class CartItemValidator extends ConstraintValidator
                 }
 
                 //валидация формата полей
-                if (isset($item['currency']) && !in_array($item['currency'], ['EUR', 'USD'], true)) {
-                    $this->context->buildViolation('currency not valid valid value: EUR,USD')
-                        ->atPath('currency')
-                        ->addViolation();
-                }
+                //тут бы неплохо получать от апи список поддерживаемых валют и их проверять
+//                if (isset($item['currency']) && !in_array($item['currency'], ['EUR', 'USD'], true)) {
+//                    $this->context->buildViolation('currency not valid valid value: EUR,USD')
+//                        ->atPath('currency')
+//                        ->addViolation();
+//                }
 
                 if (isset($item['price']) && (!is_numeric($item['price']))) {
                     $this->context->buildViolation('price not valid')

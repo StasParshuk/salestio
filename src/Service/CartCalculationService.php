@@ -9,19 +9,35 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 class CartCalculationService
 {
-    private string $openexchageretesToken;
+    private string $openexchageretesApId;
     public function __construct(private ClientInterface $client,private ContainerBagInterface $bag)
     {
         $this->openexchageretesApId = $this->bag->get('OPENEXCHANGERETES_ID');
     }
 
-    public function calculate(CartCalculateItemDto $calculateItemDto)
+    public function getCheckout(CartCalculateItemDto $calculateItemDto): array
     {
         $response = $this->sendRequest($calculateItemDto->getCheckoutCurrency());
+        return [
+            'checkoutPrice' => $this->cartCalculate($calculateItemDto, $response),
+            'checkoutCurrency' => $calculateItemDto->getCheckoutCurrency()
+        ];
+    }
 
+    public function cartCalculate(CartCalculateItemDto $calculateItemDto, array $response): int|float
+    {
+        $total = 0;
         foreach ($calculateItemDto->getItems() as $cartItem) {
-            dd($cartItem, $response, $calculateItemDto);
+            $totalInCurrentCartItem = $cartItem['price'] * $cartItem['quantity'];
+            $currentCurrnecy = $response['rates'][$cartItem['currency']];
+            if ($currentCurrnecy === 1) {
+                $total += $totalInCurrentCartItem;
+            } else {
+                $total += $totalInCurrentCartItem / $currentCurrnecy;
+            }
+
         }
+        return $total;
     }
 
     /**
