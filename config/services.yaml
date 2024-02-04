@@ -20,5 +20,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\CartCalculationService:
+      arguments:
+        $client : '@eight_points_guzzle.client.my_client'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
