@@ -15,9 +15,10 @@ class CartCalculationService
         $this->openexchageretesApId = $this->bag->get('OPENEXCHANGERETES_ID');
     }
 
+
     public function getCheckout(CartCalculateItemDto $calculateItemDto): array
     {
-        $response = $this->sendRequest($calculateItemDto->getCheckoutCurrency());
+        $response = $this->sendRequestLatest($calculateItemDto->getCheckoutCurrency());
         return [
             'checkoutPrice' => $this->cartCalculate($calculateItemDto, $response),
             'checkoutCurrency' => $calculateItemDto->getCheckoutCurrency()
@@ -37,7 +38,7 @@ class CartCalculationService
             }
 
         }
-        return $total;
+        return round($total,2);
     }
 
     /**
@@ -46,7 +47,7 @@ class CartCalculationService
      * @throws GuzzleException
      * @throws \JsonException
      */
-    private function sendRequest(string $base): array
+    private function sendRequestLatest(string $base): array
     {
         $params = [
             'query' => [
@@ -59,6 +60,21 @@ class CartCalculationService
             $content = $response->getBody()->getContents();
             //тут бы по хорошему десериализовать в обьект и работать с ним не белаю чтобы времени много не тратить
             //return $this->serializer->deserialize($content,ArrayDenormalizer::class ,'json', );
+            return json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        }
+        throw  new \Exception('Ошибка ответа от апи OPENEXCHANGERETES');
+        // логирование вывод ошибки и.т.д
+    }
+    public function sendRequestCurrencies( ): array
+    {
+        $params = [
+            'query' => [
+                'app_id' => $this->openexchageretesApId,
+            ]
+        ];
+        $response = $this->client->request("GET", '/currencies.json', $params);
+        if ($response->getStatusCode() === 200) {
+            $content = $response->getBody()->getContents();
             return json_decode($content, true, 512, JSON_THROW_ON_ERROR);
         }
         throw  new \Exception('Ошибка ответа от апи OPENEXCHANGERETES');

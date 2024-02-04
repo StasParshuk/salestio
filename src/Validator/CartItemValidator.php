@@ -2,11 +2,16 @@
 
 namespace App\Validator;
 
+use App\Service\CartCalculationService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class CartItemValidator extends ConstraintValidator
 {
+    public function __construct(private CartCalculationService $calculationService)
+    {
+    }
+
     public function validate($value, Constraint $constraint)
     {
 
@@ -38,13 +43,11 @@ class CartItemValidator extends ConstraintValidator
                         ->addViolation();
                 }
 
-                //валидация формата полей
-                //тут бы неплохо получать от апи список поддерживаемых валют и их проверять
-//                if (isset($item['currency']) && !in_array($item['currency'], ['EUR', 'USD'], true)) {
-//                    $this->context->buildViolation('currency not valid valid value: EUR,USD')
-//                        ->atPath('currency')
-//                        ->addViolation();
-//                }
+                if (isset($item['currency']) && !array_key_exists($item['currency'], $this->calculationService->sendRequestCurrencies())) {
+                    $this->context->buildViolation('in cart not correct value currency')
+                        ->atPath('currency')
+                        ->addViolation();
+                }
 
                 if (isset($item['price']) && (!is_numeric($item['price']))) {
                     $this->context->buildViolation('price not valid')
