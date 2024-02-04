@@ -9,6 +9,7 @@
 /vendor/
 .idea
 /htdocs
+.php_cs.cache
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
